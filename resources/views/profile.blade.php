@@ -7,7 +7,7 @@
         
         <div class="card-body">          
             
-            <form action="/store" method="POST" enctype="multipart/form-data">
+            <form action="/editprofile" method="POST" enctype="multipart/form-data">
                 {{csrf_field()}}  
                 <div class="row">			
 				    <!--
@@ -22,15 +22,18 @@
                             <input type="text" class="form-control" name="email" id="exampleFormControlInput1" value="">                            
                         </div>
                     -->
-                    @foreach($imagesInView as $image)
+                   
                         <div class="form-group">
                             <label for="exampleFormControlInput1">Аватар</label>
                             <input type="file" class="form-control" id="image" name="image" id="exampleFormControlInput1">						
                         </div>
                     </div>
-					
-                    <div class="col-md-4">
-                        <img src="{{$image}}" alt="" class="img-fluid">
+					@foreach($imageInView as $image)
+                    <div class="col-md-4">                        
+                            <img src="{{$image->img}}" alt="" class="img-fluid">                        
+                            <a href="/show/{{$image->id}}" class="btn btn-success">Show</a>
+                            <a href="/edit/{{$image->id}}" class="btn btn-warning">Edit</a>   
+                            <a href="/delete/{{$image->id}}" onclick="return confirm('are you sure?')" class="btn btn-danger">Delete</a>
                     </div>
                     @endforeach
 						

@@ -11,39 +11,28 @@
 |
 */
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
+Route::get('/', 'HomeController@index');
 
-Route::get('/', function () {
-    return view('homepage');
-});
+Route::get('/admin', 'HomeController@admin');
 
-Route::get('/admin', function () {
-    return view('admin');
-});
+Route::get('/login', 'HomeController@login');
 
-Route::get('/login', function (){
-	return view('login');
-});
+Route::get('/registration', 'HomeController@registration');
 
-Route::get('/registration', function (){
-	return view('registration');
-});
 
-Route::get('/profile', function () {
-	$images = DB::table('test')->select('*')->get();
-	$myImages = $images->pluck('img')->all();
-    return view('profile', ['imagesInView' => $myImages]);
-});
 
-Route::post('/store', function(Request $request){
-	$image = $request->file('image');
-	//$filename = ;
-	dd($request->image->store('img'));
-		
-	DB::table('test')->insert([
-	    ['img' => $filename]
-	]);
 
-	return redirect('/profile');
-});
+Route::get('/profile', 'MainController@profile' );
+
+
+
+
+Route::get('/show/{id}', 'MainController@show');
+
+Route::get('/edit/{id}', 'MainController@edit');
+
+Route::post('/update/{id}', 'MainController@update');
+
+Route::get('/delete/{id}', 'MainController@delete');
+
+Route::post('/editprofile', 'MainController@editprofile');
