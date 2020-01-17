@@ -2,68 +2,66 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\ImageService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
 class MainController extends Controller
 {
-	public function profile() 
+
+	private $images;
+
+	public function __construct(ImageService $imageService)
 	{
-		$images = DB::table('test')->select('*')->get();
-		$myImages = $images->all();
-	    return view('profile', ['imageInView' => $myImages]);
+		$this->images = $imageService;
+	}
+
+	public function profile() 
+	{	
+		$images	= $this->images->all();
+
+		return view('profile', ['imageInView' => $images]);
 	}
 
 	public function editprofile(Request $request)
 	{
 		$image = $request->file('image');
-		$filename = $request->image->store('img');
-			
-		DB::table('test')->insert([
-		    ['img' => $filename]
-		]);
+
+		$this->images->add($image);
 
 		return redirect('/profile');
 	}
 
+
+
+
 	public function show($id)
 	{
-		$image = DB::table('test')->select('*')->where('id', $id)->first();
-		$myImage = $image->img;
-		return view('show', ['imageInView' => $myImage]);
+		$myImage = $this->images->one($id);
+
+		return view('show', ['imageInView' => $myImage->img]);
 	}
+
 
 	public function edit($id)
 	{
-		$image = DB::table('test')->select('*')->where('id', $id)->first();	
+		$image = $this->images->one($id);
+
 		return view('edit', ['imageInView' => $image]);
 	}
 
+
 	public function update(Request $request, $id)
 	{
-		//удаляем картинку с сервера
-		$image = DB::table('test')->select('*')->where('id', $id)->first();	
-
-		Storage::delete($image->img);
-
-		$filename = $request->image->store('img');
-		
-		DB::table('test')
-		->where('id', $id)
-	    ->update(['img' => $filename]);
+		$this->images->update($id, $request->image);
 
 	    return redirect('/profile');
 	}
 
+
+
 	public function delete($id)
 	{
-		//удаляем картинку с сервера
-		$image = DB::table('test')->select('*')->where('id', $id)->first();	
-
-		Storage::delete($image->img);
-
-		DB::table('test')->where('id', $id)->delete();
+		$this->images->delete($id);
 
 		return redirect('/profile');
 	}
